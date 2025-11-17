@@ -1,16 +1,20 @@
 #include <stdio.h>
 #include <string.h>
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
+    /*FILE *f = fopen(outFile, "a");
+      fprintf(f, "Hello world!\n");
+      fclose(f);*/
+
     int out_num = 0;
-    char *outFile;
+    const char *outFile;
     char *f = 0;
     int i_count = 0;
     char *I = "-i";
-    char *inFile = 0;
+    const char *inFile = 0;
 
-    if(argc == 1)
+    if (argc == 1)
     {
         printf("Input path not provided\n");
         return 1;
@@ -35,7 +39,6 @@ int main(int argc, char *argv[])
                 return 1;
             }
         }
-        
     }
 
     for (int i = 1; i < argc; i++)
@@ -55,11 +58,44 @@ int main(int argc, char *argv[])
                 printf("Missing output path\n");
                 return 1;
             }
-
-            FILE *f = fopen(outFile, "a");
-            fprintf(f, "Hello world!\n");
-            fclose(f);
         }
     }
+
+    
+    
+    printf("%s ", txt);
+
+    int c = strlen(argv[1]) - 4;
+    int parameter = 0;
+const char *txt = argv[1] + (c);
+    for (int j = 1; j < argc; j++)
+    {
+        
+        c = strlen(argv[j]) - 4;
+
+        if (strcmp(argv[j], "-i") != 0)
+        {
+            if (strcmp(argv[j], "-o") != 0)
+            {
+                if (strcmp(argv[j] + (c), ".txt") != 0)
+                {
+                    parameter += 1;
+                    if ( parameter > 1)
+                    {
+                       printf("Too many parameters provided\n");
+                       break;
+                    }
+                    
+                }
+            }
+        }
+    }
+
+    if (argc == 2 || strlen(argv[2]) == 2)
+    {
+        printf("Needle not provided\n");
+        return 1;
+    }
+
     return 0;
 }

@@ -22,7 +22,6 @@ int main(int argc, char *argv[])
     // SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, image);
     // SDL_FreeSurface(image);
 
-
     while (running == 1)
     {
         // Dokud jsou k dispozici nějaké události, ukládej je do proměnné `event`
@@ -33,17 +32,16 @@ int main(int argc, char *argv[])
             {
                 running = 0;
             }
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+
+                x += 10;
+                printf("Event type: %d\n", event.type);
+            }
         }
-if (event.type == SDL_MOUSEBUTTONUP || event.button.button == SDL_BUTTON_LEFT)
-{   printf("Event type: %d\n", event.type);
 
-    printf("pressed\n");
-    x += 100;
-}
-
-
-        //printf(" %d ",SDL_MOUSEBUTTONUP);
-        // Posuň pozici čáry doprava
+        // printf(" %d ",SDL_MOUSEBUTTONUP);
+        //  Posuň pozici čáry doprava
         line_x++;
 
         // backgrund collour

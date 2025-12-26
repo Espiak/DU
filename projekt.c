@@ -26,13 +26,12 @@ typedef struct {
 } Pixel;
 
 
-Pixel* load_pixels(TGAHeader header, FILE* file) {
-    int width = 0;
-    int height = 0;
+Pixel* load_pixels(TGAHeader header, FILE* file)
+{
 
-    Pixel* pixels = (Pixel*) malloc(sizeof(Pixel) * width * height);
+    Pixel* pixels = (Pixel*) malloc(sizeof(Pixel) *  header.width *  header.height);
 
-    assert(fread(pixels, sizeof(Pixel) * width * height, 1, file) == 1);
+    assert(fread(pixels, sizeof(Pixel) * header.width * header.height, 1, file) == 1);
 
     return pixels;
 }
@@ -45,7 +44,7 @@ int exit = 1;
 char space[] = " ";
 char comand[20];
 TGAHeader header;
-Pixel hope;
+
 
 
 FILE* file = fopen(argv[1], "rb");
@@ -53,12 +52,14 @@ assert(file);
 assert(fread(&header, sizeof(TGAHeader), 1, file) == 1);
 
 
-
 fgets(comand,20,stdin);
+printf("comand[s] :%s\n",comand);
 char *text = strtok(comand,space);
 
 printf("comand[s] :%s\n",comand);
 printf("%s\n",text);
+
+
 
 
 Pixel* pixels = load_pixels(header, file); 
@@ -70,6 +71,9 @@ for (int row = 0; row < header.height; row++) {
         pixel->red = 0;
     }
 }
+
+
+
 
 if(strcmp(text,"resize") == 0)//resize
 {

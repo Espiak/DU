@@ -5,19 +5,21 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#pragma pack(push, 1)
 typedef struct {
-    uint8_t id_length;
-    uint8_t color_map_type;
-    uint8_t image_type;
-    uint8_t color_map[5];
+    uint8_t  id_length;
+    uint8_t  color_map_type;
+    uint8_t  image_type;
+    uint8_t  color_map[5];
     uint16_t x_origin;
     uint16_t y_origin;
     uint16_t width;
     uint16_t height;
-    uint8_t depth;
-    uint8_t descriptor;
-    
+    uint8_t  depth;
+    uint8_t  descriptor;
 } TGAHeader;
+#pragma pack(pop)
+
 
 typedef struct {
     uint8_t blue;
@@ -46,8 +48,10 @@ char comand[20];
 TGAHeader header;
 
 
+printf("sizeof(TGAHeader) = %zu\n", sizeof(TGAHeader));
 
 FILE* file = fopen(argv[1], "rb");
+FILE* outfile = fopen(argv[2], "wb");
 assert(file);
 assert(fread(&header, sizeof(TGAHeader), 1, file) == 1);
 
@@ -58,6 +62,7 @@ char *text = strtok(comand,space);
 
 printf("comand[s] :%s\n",comand);
 printf("%s\n",text);
+printf("%d\n",header.depth);
 
 
 
@@ -71,7 +76,7 @@ for (int row = 0; row < header.height; row++) {
         pixel->red = 0;
     }
 }
-
+fwrite(&pixels, sizeof(Pixel), 4016*6016, outfile) == 1;
 
 
 

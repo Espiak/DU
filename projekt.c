@@ -39,45 +39,62 @@ Pixel* load_pixels(TGAHeader header, FILE* file)
 }
 
 
+int croping(int width, int height, int x_start, int y_start,TGAHeader header,FILE* file)
+{
+
+Pixel* pixels = (Pixel*) malloc(sizeof(Pixel) *  width *  height);
+
+  //Pixel* pixels = load_pixels(header, file); 
+
+for (int row = x_start; row < height; row++) {
+    for (int col = y_start; col < width; col++) 
+    {
+        Pixel* pixel = pixels + (row * header.width + col);
+
+    }
+}
+
+
+}
 
 int main(int argc, char const *argv[])
 {
 int exit = 1;
 char space[] = " ";
+char line[] = ",";
 char comand[20];
 TGAHeader header;
+int AVRG = 0;
+
 
 
 printf("sizeof(TGAHeader) = %zu\n", sizeof(TGAHeader));
 
 FILE* file = fopen(argv[1], "rb");
 FILE* outfile = fopen(argv[2], "wb");
+assert(outfile);
 assert(file);
 assert(fread(&header, sizeof(TGAHeader), 1, file) == 1);
+
+
+Pixel* pixels = load_pixels(header, file); 
+
+
+
+int x = 0;
+int y = 0;
+int width = 0;
+int height = 0;
+
+
+for (size_t i = 0; i < 20; i++)
+{
 
 
 fgets(comand,20,stdin);
 printf("comand[s] :%s\n",comand);
 char *text = strtok(comand,space);
-
-printf("comand[s] :%s\n",comand);
 printf("%s\n",text);
-printf("%d\n",header.depth);
-
-
-
-
-Pixel* pixels = load_pixels(header, file); 
-
-for (int row = 0; row < header.height; row++) {
-    for (int col = 0; col < header.width; col++) 
-    {
-        Pixel* pixel = pixels + (row * header.width + col);
-        pixel->red = 0;
-    }
-}
-fwrite(&pixels, sizeof(Pixel), 4016*6016, outfile) == 1;
-
 
 
 if(strcmp(text,"resize") == 0)//resize
@@ -88,32 +105,66 @@ if(strcmp(text,"resize") == 0)//resize
 else if(strcmp(text,"crop") == 0)//crop
 {
 
+x = atoi(strtok(NULL,line)); 
+printf("x:%d/t",x);
+y = atoi(strtok(NULL,line));
+printf("y:%d/t",y);
+width = atoi(strtok(NULL,line));
+printf("wight:%d/t",width);
+height = atoi(strtok(NULL,"\n"));
+printf("height:%d/t",height);
+
+
+
+
+croping(width, height, x, y, header ,file);
+
 }else if(strcmp(text,"copy") == 0)//copy
 {
 
 }else if(strcmp(text,"move") == 0)//move
 {
 
+
 }else if(comand[0] == 'b' && comand[1] == 'w')//bw
 {
 
-}else if(comand[0] == 'i' && comand[1] == 'n')//info
+fwrite(&header, sizeof header, 1, outfile);
 
+for (int row = 0; row < header.height; row++) {
+    for (int col = 0; col < header.width; col++) 
+    {
+        Pixel* pixel = pixels + (row * header.width + col);
+        AVRG = (pixel->red + pixel->green + pixel->blue)/3;
+        pixel->red = AVRG;
+        pixel->green = AVRG;
+        pixel->blue = AVRG;
+    }
+}
+
+}else if(comand[0] == 'i' && comand[1] == 'n')//info
 {
 printf("Image type: %d, pixel depth: %d, resolution %dx%d\n", header.image_type, header.depth, header.width,header.height);
+
 }else if(comand[0] == 's' && comand[1] == 'a')//save
 {
+
+    fwrite(&header, sizeof header, 1, outfile);
+    fwrite(pixels, sizeof(Pixel), header.width*header.height, outfile);
 
 }else if(comand[0] == 'e' && comand[1] == 'x')//exit
 {
 return 0;
-
+i = i + 50;
 printf("exit funguje");
 
 }else
 {
-    printf("wrong parameters");
+    printf("wrong parameters\n");
 }
+}
+fclose(outfile);
+fclose(file);
 
     return 1;
 

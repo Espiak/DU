@@ -40,21 +40,26 @@ Pixel *load_pixels(TGAHeader header, FILE *file)
 
 int croping(int width, int height, int x_start, int y_start, TGAHeader header, FILE *file, FILE *outfile)
 {
+    
 
+    //fread(&pixels, sizeof(Pixel) * header.width * header.height, 1, file);
+    header.width = width;
+    header.height = height;
+    fwrite(&header, sizeof(header), 1, outfile);
     Pixel *pixels = (Pixel *)malloc(sizeof(Pixel) * width * height);
 
-    // Pixel* pixels = load_pixels(header, file);
-    // assert(fread(pixels, sizeof(Pixel) * width * height, 1, file) == 1);
 
-    for (int row = x_start; row < height; row++)
+
+    for (int row = x_start; row < x_start+width; row++)
     {
-        for (int col = y_start; col < width; col++)
+        for (int col = y_start; col < y_start+width; col++)
         {
             Pixel *pixel = pixels + (row * width + col);
         }
     }
 
-    fwrite(&header, sizeof(header), 1, outfile);
+    
+    fwrite(&pixels, sizeof(Pixel), width * height, outfile);
 }
 
 int main(int argc, char const *argv[])
@@ -66,7 +71,7 @@ int main(int argc, char const *argv[])
     TGAHeader header;
     int AVRG = 0;
 
-    printf("sizeof(TGAHeader) = %zu\n", sizeof(TGAHeader));
+    printf("sizeof(TGAHeader) = %ld\n", sizeof(TGAHeader));
 
     FILE *file = fopen(argv[1], "rb");
     FILE *outfile = fopen(argv[2], "wb");
@@ -86,7 +91,7 @@ int main(int argc, char const *argv[])
 
         fgets(comand, 20, stdin);
         printf("comand[s] :%s\n", comand);
-        printf("comad[0-4]:%c%c%c%c\n", comand[0], comand[1], comand[2], comand[3], comand[4]);
+
         char *text = strtok(comand, space);
 
         printf("%s\n", text);
@@ -95,10 +100,10 @@ int main(int argc, char const *argv[])
         {
             printf("its equal resize\n");
         }
-        else if (comand[0] == 'c' && comand[1] == 'r' && comand[2] == 'o' && comand[3] == 'p') // crop
+        else if (strcmp(text,"crop") == 0) // crop
         {
             printf("crop funguje\n");
-            
+
             x = atoi(strtok(NULL, line));
             printf("x:%d\t", x);
             y = atoi(strtok(NULL, line));
@@ -106,9 +111,28 @@ int main(int argc, char const *argv[])
             width = atoi(strtok(NULL, line));
             printf("wight:%d\t", width);
             height = atoi(strtok(NULL, "\n"));
-            printf("height:%d\t", height);
+            printf("height:%d\n", height);
 
-            croping(width, height, x, y, header, file, outfile);
+            
+    
+    header.width = width;
+    header.height = height;
+    fwrite(&header, sizeof(header), 1, outfile);
+    Pixel *pixel = (Pixel *)malloc(sizeof(Pixel) * width * height);
+
+
+    for (int row = x; row < x+width; row++)
+    {
+        for (int col = y; col < y+width; col++)
+        {
+            Pixel *pixel = pixels + (row * width + col);
+        }
+    }
+
+    
+    fwrite(&pixels, sizeof(Pixel), width * height, outfile);
+
+            //croping(width, height, x, y, header, file, outfile);
         }
         else if (strcmp(text, "copy") == 0) // copy
         {

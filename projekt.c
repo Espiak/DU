@@ -109,7 +109,7 @@ int main(int argc, char const *argv[])
             y = atoi(strtok(NULL, line));
             printf("y:%d\t", y);
             width = atoi(strtok(NULL, line));
-            printf("wight:%d\t", width);
+            printf("widht:%d\t", width);
             height = atoi(strtok(NULL, "\n"));
             printf("height:%d\n", height);
 

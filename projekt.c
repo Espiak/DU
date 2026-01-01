@@ -40,25 +40,21 @@ Pixel *load_pixels(TGAHeader header, FILE *file)
 
 int croping(int width, int height, int x_start, int y_start, TGAHeader header, FILE *file, FILE *outfile)
 {
-    
 
-    //fread(&pixels, sizeof(Pixel) * header.width * header.height, 1, file);
+    // fread(&pixels, sizeof(Pixel) * header.width * header.height, 1, file);
     header.width = width;
     header.height = height;
     fwrite(&header, sizeof(header), 1, outfile);
     Pixel *pixels = (Pixel *)malloc(sizeof(Pixel) * width * height);
 
-
-
-    for (int row = x_start; row < x_start+width; row++)
+    for (int row = x_start; row < x_start + width; row++)
     {
-        for (int col = y_start; col < y_start+width; col++)
+        for (int col = y_start; col < y_start + width; col++)
         {
             Pixel *pixel = pixels + (row * width + col);
         }
     }
 
-    
     fwrite(&pixels, sizeof(Pixel), width * height, outfile);
 }
 
@@ -67,7 +63,7 @@ int main(int argc, char const *argv[])
     int exit = 1;
     char space[] = " ";
     char line[] = ",";
-    char comand[20];
+    char comand[25];
     TGAHeader header;
     int AVRG = 0;
 
@@ -89,7 +85,7 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < 20; i++)
     {
 
-        fgets(comand, 20, stdin);
+        fgets(comand, 25, stdin);
         printf("comand[s] :%s\n", comand);
 
         char *text = strtok(comand, space);
@@ -100,7 +96,7 @@ int main(int argc, char const *argv[])
         {
             printf("its equal resize\n");
         }
-        else if (strcmp(text,"crop") == 0) // crop
+        else if (strcmp(text, "crop") == 0) // crop
         {
             printf("crop funguje\n");
 
@@ -114,25 +110,25 @@ int main(int argc, char const *argv[])
             printf("height:%d\n", height);
 
             
-    
-    header.width = width;
-    header.height = height;
-    fwrite(&header, sizeof(header), 1, outfile);
-    Pixel *pixel = (Pixel *)malloc(sizeof(Pixel) * width * height);
+            Pixel *croped = (Pixel *)malloc(sizeof(Pixel) * width * height);
+            int m = 0;
 
+            for (int row = y; row < y + height; row++)
+            {
+                for (int col = x; col < x + width; col++)
+                {
+                    croped[m] = pixels[row * header.width + col];
+                    m++;
+                }
+            }
+            header.width = width;
+            header.height = height;
+            header.x_origin = 0;
+            header.y_origin = 0;
+                fwrite(&header, sizeof(header), 1, outfile);
+            fwrite(croped, sizeof(Pixel), width * height, outfile);
 
-    for (int row = x; row < x+width; row++)
-    {
-        for (int col = y; col < y+width; col++)
-        {
-            Pixel *pixel = pixels + (row * width + col);
-        }
-    }
-
-    
-    fwrite(&pixels, sizeof(Pixel), width * height, outfile);
-
-            //croping(width, height, x, y, header, file, outfile);
+            // croping(width, height, x, y, header, file, outfile);
         }
         else if (strcmp(text, "copy") == 0) // copy
         {
@@ -164,7 +160,7 @@ int main(int argc, char const *argv[])
         else if (comand[0] == 's' && comand[1] == 'a') // save
         {
 
-            fwrite(&header, sizeof header, 1, outfile);
+            // fwrite(&header, sizeof header, 1, outfile);
             fwrite(pixels, sizeof(Pixel), header.width * header.height, outfile);
         }
         else if (comand[0] == 'e' && comand[1] == 'x') // exit

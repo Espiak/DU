@@ -125,7 +125,7 @@ int main(int argc, char const *argv[])
             header.height = height;
             header.x_origin = 0;
             header.y_origin = 0;
-                fwrite(&header, sizeof(header), 1, outfile);
+            fwrite(&header, sizeof(header), 1, outfile);
             fwrite(croped, sizeof(Pixel), width * height, outfile);
 
             // croping(width, height, x, y, header, file, outfile);

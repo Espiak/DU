@@ -81,6 +81,7 @@ int main(int argc, char const *argv[])
     int y = 0;
     int width = 0;
     int height = 0;
+    Pixel *pixel = (Pixel *)malloc(sizeof(Pixel) * header.width * header.height);
 
     for (int i = 0; i < 20; i++)
     {
@@ -109,7 +110,6 @@ int main(int argc, char const *argv[])
             height = atoi(strtok(NULL, "\n"));
             printf("height:%d\n", height);
 
-            
             Pixel *croped = (Pixel *)malloc(sizeof(Pixel) * width * height);
             int m = 0;
 
@@ -130,26 +130,74 @@ int main(int argc, char const *argv[])
 
             // croping(width, height, x, y, header, file, outfile);
         }
-        else if (strcmp(text, "copy") == 0) // copy
+        else if (strcmp(text, "copy") == 0) // copy //copy x1,y1,w,h x2,y2
         {
-        }
+            int x1 = atoi(strtok(NULL, line));
+            printf("x1:%d\t", x1);
+            int y1 = atoi(strtok(NULL, line));
+            printf("y1:%d\t", y1);
+            width = atoi(strtok(NULL, line));
+            printf("widht:%d\t", width);
+            height = atoi(strtok(NULL, line));
+            printf("height:%d\t", height);
+            int x2 = atoi(strtok(NULL, line));
+            printf("x2:%d\t", x2);
+            int y2 = atoi(strtok(NULL, "\n"));
+            printf("y2:%d\n", y2);
+
+            Pixel *croped = (Pixel *)malloc(sizeof(Pixel) * width * height);
+            int m = 0;
+
+            for (int row = y; row < y + height; row++)
+            {
+                for (int col = x; col < x + width; col++)
+                {
+                    croped[m] = pixels[row * header.width + col];
+                    m++;
+                }
+            }
+        }    
         else if (strcmp(text, "move") == 0) // move
         {
-        }
-        else if (comand[0] == 'b' && comand[1] == 'w') // bw
-        {
-
-            fwrite(&header, sizeof header, 1, outfile);
+            int move_x = 0;
+            int move_y = 0;
+            x = atoi(strtok(NULL, line));
+            printf("x:%d\t", x);
+            y = atoi(strtok(NULL, "\n"));
+            printf("y:%d\n", y);
 
             for (int row = 0; row < header.height; row++)
             {
                 for (int col = 0; col < header.width; col++)
                 {
-                    Pixel *pixel = pixels + (row * header.width + col);
-                    AVRG = (pixel->red + pixel->green + pixel->blue) / 3;
-                    pixel->red = AVRG;
-                    pixel->green = AVRG;
-                    pixel->blue = AVRG;
+                    move_x = row + x;
+                    if (move_x > header.height)
+                    {
+                        move_x = move_x - header.height;
+                    }
+
+                    move_y = col + y;
+                    if (move_y > header.width)
+                    {
+                        move_y = move_y - header.width;
+                    }
+                    pixel[(move_x)*header.width + (move_y)] = pixels[row * header.width + col];
+                }
+            }
+        }
+        else if (comand[0] == 'b' && comand[1] == 'w') // bw
+        {
+
+            for (int row = 0; row < header.height; row++)
+            {
+                for (int col = 0; col < header.width; col++)
+                {
+                    int pos = row * header.width + col;
+                    pixel[pos] = pixels[pos];
+                    AVRG = (pixel[pos].red + pixel[pos].green + pixel[pos].blue) / 3;
+                    pixel[pos].red = AVRG;
+                    pixel[pos].green = AVRG;
+                    pixel[pos].blue = AVRG;
                 }
             }
         }
@@ -160,8 +208,8 @@ int main(int argc, char const *argv[])
         else if (comand[0] == 's' && comand[1] == 'a') // save
         {
 
-            // fwrite(&header, sizeof header, 1, outfile);
-            fwrite(pixels, sizeof(Pixel), header.width * header.height, outfile);
+            fwrite(&header, sizeof header, 1, outfile);
+            fwrite(pixel, sizeof(Pixel), header.width * header.height, outfile);
         }
         else if (comand[0] == 'e' && comand[1] == 'x') // exit
         {

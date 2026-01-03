@@ -135,6 +135,12 @@ int main(int argc, char const *argv[])
         }
         else if (strcmp(text, "move") == 0) // move
         {
+            Pixel *pixel =(Pixel *)malloc(sizeof(Pixel) * width * height);
+            for (int i = 0; i < width*height; i++)
+            {
+                pixel[row * header.width + col + 1] = pixels[row * header.width + col];
+            }
+            
         }
         else if (comand[0] == 'b' && comand[1] == 'w') // bw
         {
